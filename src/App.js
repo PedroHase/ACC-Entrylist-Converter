@@ -14,6 +14,11 @@ const useStyles = makeStyles((theme) => ({
   },
   alert: {
     margin: theme.spacing(1, 0)
+  },
+  copyright: {
+    marginTop: "10px",
+    color: "#9e9e9e",
+    textAlign: "center"
   }
 }));
 
@@ -98,6 +103,13 @@ export default function App() {
               {error}
             </Alert>
           )}
+          <Typography
+            component="p"
+            variant="subtitle2"
+            className={classes.copyright}
+          >
+            Made by Peter Hase 🐰 2021
+          </Typography>
         </Grid>
       </Grid>
     </div>
