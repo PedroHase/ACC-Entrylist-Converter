@@ -5,6 +5,19 @@ import { Button, TextField, Grid, Paper, Typography } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { Send } from "@material-ui/icons";
 
+function copyToClipboard(text) {
+  var dummy = document.createElement("textarea");
+  // to avoid breaking orgain page when copying more words
+  // cant copy when adding below this code
+  // dummy.style.display = 'none'
+  document.body.appendChild(dummy);
+  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+  dummy.value = text;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+}
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3, 2)
@@ -34,6 +47,28 @@ export default function App() {
 
     try {
       const json = JSON.parse(entrylist);
+      const list = [];
+      if (json.entries) {
+        json.entries.forEach((entry) => {
+          // set number
+          let name = [];
+          entry.drivers.forEach((driver) =>
+            driver.firstName && driver.lastName
+              ? name.push(`${driver.firstName} ${driver.lastName}`)
+              : "No name"
+          );
+          if (!entry.raceNumber) {
+            return;
+          }
+          list.push({ carNumber: entry.raceNumber, name: name.join(", ") });
+        });
+        copyToClipboard(JSON.stringify(list));
+        setSuccess(
+          "Entrylist erfolgreich konvertiert und in das Clipboard kopiert!"
+        );
+      } else {
+        setError("Bitte prüfe die Entrylist!");
+      }
     } catch (error) {
       console.log(entrylist);
       console.error(error);
@@ -45,7 +80,7 @@ export default function App() {
     setTimeout(() => {
       setError(null);
       setSuccess(null);
-    }, 10000);
+    }, 8000);
   };
 
   const classes = useStyles();
@@ -77,7 +112,7 @@ export default function App() {
               style={{ width: "100%" }}
               multiline
               rows={8}
-              onChange={(v) => setEntrylist(v)}
+              onChange={(v) => setEntrylist(v.target.value)}
             />
             <Grid container justify="flex-end">
               <div>
